@@ -1,0 +1,61 @@
+name: Submit a talk
+description: Add a CyberSheeple monthly knowledge-share deck. Export Google Slides as PDF and drag it into the form.
+title: "[talk] "
+labels: ["talk"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Export from Google Slides with **File → Download → PDF Document (.pdf)**. Do not use Print → Save as PDF — that often turns text into images and search cannot read it.
+
+        GitHub issue attachments top out around **25MB**. If the file is larger, open a pull request and drop `slides.pdf` into a new `talks/` folder instead.
+
+        After you submit, a draft PR is opened. CI extracts per-slide text. Nothing merges to `main` until someone reviews it.
+  - type: input
+    id: title
+    attributes:
+      label: Talk title
+      placeholder: SillyCTF 2 recap
+    validations:
+      required: true
+  - type: input
+    id: month
+    attributes:
+      label: Month / year
+      description: Presentation month. Examples `2026-04` or `April 2026`.
+      placeholder: 2026-04
+    validations:
+      required: true
+  - type: input
+    id: day
+    attributes:
+      label: Day (optional)
+      description: Leave blank if you only remember the month. The catalog will show "April 2026", not a fake calendar day.
+      placeholder: "12"
+  - type: input
+    id: speakers
+    attributes:
+      label: Who presented
+      description: GitHub usernames (`@joevdotme`), aliases, or IRL names. Comma-separated for more than one.
+      placeholder: "@joevdotme, DullPointer"
+    validations:
+      required: true
+  - type: textarea
+    id: slides
+    attributes:
+      label: PDF slides
+      description: Drag the .pdf into this box. GitHub will attach it and paste a link. That is how ingest finds the file.
+      placeholder: Drag deck.pdf here
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary (optional)
+      description: A few sentences on what the talk covered. Not a reconstructed script of the room.
+      placeholder: What we solved, what we bounced off, what to drill next month.
+  - type: input
+    id: gslides
+    attributes:
+      label: Google Slides URL (optional)
+      placeholder: https://docs.google.com/presentation/d/…
