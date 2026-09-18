@@ -1,0 +1,19 @@
+{
+  "title": "How to add a talk",
+  "date": "2026-09-01",
+  "datePrecision": "month",
+  "speakers": [
+    {
+      "display": "CyberSheeple",
+      "github": "CyberSheeple"
+    }
+  ],
+  "tags": [
+    "meta"
+  ],
+  "summary": "Export Google Slides as a PDF, attach it to the Submit a talk issue form, and let CI extract searchable slide text.",
+  "gslides_url": null,
+  "duration_minutes": 5,
+  "transcript": false,
+  "issue": null
+}

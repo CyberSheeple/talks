@@ -1,0 +1,16 @@
+{
+  "title": "Talk title",
+  "date": "2026-01-01",
+  "datePrecision": "month",
+  "speakers": [
+    {
+      "display": "handle-or-name"
+    }
+  ],
+  "tags": [],
+  "summary": "",
+  "gslides_url": null,
+  "duration_minutes": null,
+  "transcript": false,
+  "issue": null
+}
