@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-09-18T17:07:00.462Z",
+  "talks": [
+    {
+      "slug": "2026-09-01-how-to-add-a-talk",
+      "title": "How to add a talk",
+      "date": "2026-09-01",
+      "datePrecision": "month",
+      "speakers": [
+        {
+          "display": "CyberSheeple",
+          "github": "CyberSheeple"
+        }
+      ],
+      "speakerLabels": [
+        "CyberSheeple"
+      ],
+      "tags": [
+        "meta"
+      ],
+      "summary": "Export Google Slides as a PDF, attach it to the Submit a talk issue form, and let CI extract searchable slide text.",
+      "gslides_url": null,
+      "duration_minutes": 5,
+      "transcript": false,
+      "issue": null,
+      "hasPdf": true,
+      "hasRecap": true,
+      "hasTranscript": false,
+      "extractStatus": "ok",
+      "slidesText": "CyberSheeple talks\nHow to add a talk\nCyberSheeple monthly knowledge-share\nExport the deck. Attach the PDF. CI does the rest.\nCyberSheeple talks\nExport from Google Slides\nFile > Download > PDF Document (.pdf)\nDo not use Print > Save as PDF.\nPrint-to-PDF often rasterizes text and search cannot read it.\nCyberSheeple talks\nSubmit without git\nOpen Submit a talk on GitHub Issues.\nMonth and year of the talk. Day is optional.\nWho presented: @github, an alias, or a real name.\nDrag the PDF into the slides field.\nCyberSheeple talks\nWhat happens next\nA draft pull request lands with your PDF.\nCI extracts per-slide text into slides.md.\nAfter merge, the catalog can search the words on the slides.\nCyberSheeple talks\nOptional extras\nrecap.md - a short writeup you actually stand behind.\nNot a generated script of an unscripted room.\ntranscript.md - spoken words, aligned to Slide N,\nwhen you have captions or a recording you transcribed elsewhere.",
+      "recapText": "This is a meta-talk, not a reconstructed live script. The useful bits: export PDF from Slides, drag it onto the issue form, wait for the draft PR, glance at slides.md to see whether search will work.\n",
+      "transcriptText": "",
+      "path": "talks/2026-09-01-how-to-add-a-talk"
+    }
+  ],
+  "warnings": []
+}
