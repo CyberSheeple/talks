@@ -36,6 +36,11 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
+      - name: Ensure example slides PDF
+        run: |
+          if [ ! -f talks/2026-09-01-how-to-add-a-talk/slides.pdf ]; then
+            node scripts/build-example.mjs
+          fi
       - run: npm test
       - run: node scripts/ingest.mjs
       - name: Comment on empty extracts
