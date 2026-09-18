@@ -1,0 +1,25 @@
+{
+  "name": "cybersheeple-talks",
+  "private": true,
+  "type": "module",
+  "description": "CyberSheeple monthly knowledge-share archive: PDFs, extracted slide text, searchable catalog.",
+  "scripts": {
+    "start": "http-server . -p 43141 -c-1 --cors",
+    "ingest": "node scripts/ingest.mjs",
+    "new-talk": "node scripts/new-talk.mjs",
+    "align": "node scripts/align.mjs",
+    "issue-ingest": "node scripts/issue-ingest.mjs",
+    "build-example": "node scripts/build-example.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "unpdf": "^1.0.2"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "pdf-lib": "^1.17.1"
+  }
+}
