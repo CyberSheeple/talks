@@ -1,0 +1,83 @@
+name: Issue ingest
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  ingest:
+    if: >-
+      contains(github.event.issue.labels.*.name, 'talk') ||
+      startsWith(github.event.issue.title, '[talk]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Parse issue
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: node scripts/issue-ingest.mjs --event "$GITHUB_EVENT_PATH" --out parsed.json
+      - name: Stop on parse errors
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(jq -r .ok parsed.json)" != "true" ]; then
+            err=$(jq -r .error parsed.json)
+            gh issue comment "${{ github.event.issue.number }}" --body "$(printf 'Could not ingest this talk.\n\n%s\n\nExport from Google Slides as **File → Download → PDF**, then drag the file into the PDF slides field.' "$err")"
+            exit 1
+          fi
+      - name: Download PDF
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/talk-pdf
+          url=$(jq -r .pdfUrl parsed.json)
+          curl -fsSL -A "CyberSheeple-talks-ingest" -o /tmp/talk-pdf/slides.pdf "$url" \
+            || curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" -o /tmp/talk-pdf/slides.pdf "$url"
+          python3 - <<'PY'
+          import pathlib
+          data = pathlib.Path("/tmp/talk-pdf/slides.pdf").read_bytes()[:8]
+          if not data.startswith(b"%PDF"):
+              raise SystemExit("Downloaded file is not a PDF. Drag a .pdf into the slides field.")
+          PY
+      - name: Open talk branch, write files, draft PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BRANCH=$(jq -r .branch parsed.json)
+          git fetch origin "$BRANCH" || true
+          if git rev-parse --verify "origin/$BRANCH" >/dev/null 2>&1; then
+            git checkout "$BRANCH"
+          else
+            git checkout -b "$BRANCH"
+          fi
+          node scripts/issue-ingest.mjs --apply --from parsed.json --pdf /tmp/talk-pdf/slides.pdf | tee apply.json
+          SLUG=$(jq -r .slug apply.json)
+          git add "talks/$SLUG"
+          if ! git diff --cached --quiet; then
+            git commit -m "talk: add ${SLUG} from #${ISSUE}"
+            git push -u origin "$BRANCH"
+          else
+            git push -u origin "$BRANCH" || true
+          fi
+          existing=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number // empty')
+          if [ -z "$existing" ]; then
+            url=$(gh pr create --draft --head "$BRANCH" --title "$(jq -r .prTitle parsed.json)" --body "Submitted via #${ISSUE}.
+
+          CI extracts slide text into \`slides.md\` on this PR. Nothing merges to \`main\` until someone reviews it.")
+            gh issue comment "$ISSUE" --body "Draft pull request opened: ${url}"
+          else
+            gh issue comment "$ISSUE" --body "Updated draft PR #${existing} for \`talks/${SLUG}\`."
+          fi

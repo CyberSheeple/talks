@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CyberSheeple monthly knowledge-share decks — searchable slide archive.">
+  <title>CyberSheeple talks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-scanlines" aria-hidden="true"></div>
+  <div class="bg-noise" aria-hidden="true"></div>
+
+  <header class="hud">
+    <div class="hud-status">
+      <span class="hud-label">SYS</span>
+      <span class="hud-value">ONLINE</span>
+      <span class="hud-sep">|</span>
+      <span class="hud-label">NODE</span>
+      <span class="hud-value">talks.hackers.nyc</span>
+    </div>
+    <nav class="hud-nav">
+      <a href="#/" data-route="/">catalog</a>
+      <a href="#/add" data-route="/add">add a talk</a>
+      <a href="https://hackers.nyc">hackers.nyc</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1 class="hero-title"><span class="terminal-prompt">$</span> <span id="hero-cmd">ls talks/</span></h1>
+      <p class="hero-bio" id="hero-bio">CyberSheeple monthly knowledge-share. Search the words that were on the slides.</p>
+    </section>
+    <div id="view" class="view">
+      <p class="state">loading catalog…</p>
+    </div>
+  </main>
+
+  <footer class="hud-footer">
+    <span class="hud-data">ARCHIVE</span>
+    <span class="hud-sep">|</span>
+    <span class="hud-data" id="hud-count">TALKS: —</span>
+    <span class="hud-sep">|</span>
+    <span class="hud-data flicker">PUBLIC</span>
+  </footer>
+
+  <script type="module" src="src/catalog.js"></script>
+</body>
+</html>
