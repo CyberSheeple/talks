@@ -4,4 +4,6 @@ node_modules/
 test-results/
 .cache/
 .tmp/
+.tmp-pack-site-test/
+_site/
 parsed.json

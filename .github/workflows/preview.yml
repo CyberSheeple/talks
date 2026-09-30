@@ -1,0 +1,114 @@
+name: Deploy PR preview
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+    paths:
+      - "talks/**"
+      - "src/**"
+      - "index.html"
+      - "styles.css"
+      - "robots.txt"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/preview.yml"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency: preview-${{ github.ref }}
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-node@v4
+        if: github.event.action != 'closed'
+        with:
+          node-version: "22"
+
+      - name: Install, extract, pack
+        if: github.event.action != 'closed'
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          if [ ! -f talks/2026-09-01-how-to-add-a-talk/slides.pdf ]; then
+            node scripts/build-example.mjs
+          fi
+          npm test
+          node scripts/ingest.mjs
+          node scripts/pack-site.mjs --out _site
+
+      - name: Deploy or remove preview
+        id: preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: _site
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          pages-base-url: talks.hackers.nyc
+          wait-for-pages-deployment: false
+          comment: false
+
+      - name: Sticky catalog preview comment
+        if: steps.preview.outputs.deployment-action == 'deploy'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIEW_URL: ${{ steps.preview.outputs.preview-url }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          mapfile -t slugs < <(
+            gh pr diff "$PR" --name-only \
+              | sed -n 's|^talks/\([^/][^/]*\)/.*|\1|p' \
+              | grep -v '^_template$' \
+              | sort -u || true
+          )
+          links=""
+          for slug in "${slugs[@]+"${slugs[@]}"}"; do
+            links="${links}- [${slug}](${PREVIEW_URL}#/talk/$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$slug"))"$'\n'
+          done
+          body=$(printf '%s\n' \
+            '<!-- catalog-preview -->' \
+            '## Catalog preview' \
+            '' \
+            "Rendered catalog for this PR: **[open preview](${PREVIEW_URL})**" \
+            '' \
+            'Use this to review how the talk shows up in the archive (search, talk page, PDF frame, slide text) before merge.' \
+          )
+          if [ -n "$links" ]; then
+            body=$(printf '%s\n\n### Talks in this PR\n\n%s' "$body" "$links")
+          fi
+          body=$(printf '%s\n\n_Previews live under `/pr-preview/` on the Pages site and are removed when the PR closes._' "$body")
+
+          existing=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" --paginate \
+            --jq '.[] | select(.user.login=="github-actions[bot]" and (.body|contains("<!-- catalog-preview -->"))) | .id' \
+            | head -n1)
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" -f body="$body" >/dev/null
+          else
+            gh pr comment "$PR" --body "$body"
+          fi
+
+      - name: Clear preview comment on close
+        if: steps.preview.outputs.deployment-action == 'remove'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          body=$(printf '%s\n' \
+            '<!-- catalog-preview -->' \
+            '## Catalog preview' \
+            '' \
+            'Preview removed (PR closed).')
+          existing=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" --paginate \
+            --jq '.[] | select(.user.login=="github-actions[bot]" and (.body|contains("<!-- catalog-preview -->"))) | .id' \
+            | head -n1)
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" -f body="$body" >/dev/null
+          fi

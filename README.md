@@ -26,8 +26,8 @@ Still needed in the GitHub UI:
 
 1. Create a `talk` label (the issue form applies it). Ingest also runs if the issue title starts with `[talk]`.
 2. Enable Issues if they are off.
-3. **Settings → Actions → General → Workflow permissions** → enable **Allow GitHub Actions to create and approve pull requests**. Without this, issue ingest can push a `talk/…` branch but `gh pr create` fails with “GitHub Actions is not permitted to create or approve pull requests”.
-4. Enable Pages from `main` `/`.
+3. **Settings → Actions → General → Workflow permissions** → enable **Read and write permissions** and **Allow GitHub Actions to create and approve pull requests**. Write access is required to push `gh-pages` (production + PR previews). The approve/create toggle is required so issue ingest can open draft talk PRs.
+4. Enable Pages from the **`gh-pages`** branch, folder `/` (not `main`). Production and PR previews both publish there.
 5. DNS: CNAME `talks.hackers.nyc` → `cybersheeple.github.io`, same pattern as `hackerpost.hackers.nyc`.
 
 If the PDF is larger than 25MB, open a PR and drop `slides.pdf` into a new folder under `talks/` instead. The same extract job still runs.
@@ -72,9 +72,21 @@ npm run align -- 2026-04-12-sillyctf-recap captions.vtt
 
 ## GitHub Pages
 
-This repo is meant to publish from `main` `/` (not `/docs`). `CNAME` is `talks.hackers.nyc`. Point a DNS CNAME at `cybersheeple.github.io`, same pattern as `hackerpost.hackers.nyc`. Local preview does not wait on that DNS.
+Production publishes from the **`gh-pages`** branch (folder `/`), not from `main` directly. On every push to `main`, `Deploy Pages` packs the static catalog and deploys it there (keeping `pr-preview/` intact).
+
+`CNAME` is `talks.hackers.nyc`. Point a DNS CNAME at `cybersheeple.github.io`, same pattern as `hackerpost.hackers.nyc`. Local `npm start` does not wait on that DNS.
 
 `.nojekyll` is required so GitHub Pages does not swallow `_template`.
+
+## PR catalog preview
+
+Talk PRs get a rendered preview of the catalog (same HTML/CSS as production) under:
+
+`https://talks.hackers.nyc/pr-preview/pr-<number>/`
+
+CI extracts slide text, packs the site, deploys that subdirectory, and leaves a sticky PR comment with the link (plus deep links to talks touched in the PR). Closing the PR removes the preview. `robots.txt` disallows `/pr-preview/` so scrapers skip temporary deploys.
+
+One-time maintainer switch if Pages still points at `main`: **Settings → Pages → Deploy from branch → `gh-pages` / root**, then re-run **Deploy Pages** once if the branch is empty.
 
 ## What this is not
 

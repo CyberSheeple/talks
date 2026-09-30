@@ -10,6 +10,7 @@
     "align": "node scripts/align.mjs",
     "issue-ingest": "node scripts/issue-ingest.mjs",
     "build-example": "node scripts/build-example.mjs",
+    "pack-site": "node scripts/pack-site.mjs --out _site --cname",
     "test": "node --test test/*.test.mjs"
   },
   "engines": {
