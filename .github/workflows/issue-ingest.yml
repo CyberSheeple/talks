@@ -75,7 +75,7 @@ jobs:
           existing=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number // empty')
           if [ -z "$existing" ]; then
             title=$(jq -r .prTitle parsed.json)
-            body=$(printf 'Submitted via #%s.\n\nCI extracts slide text into `slides.md` on this PR. Nothing merges to `main` until someone reviews it.' "$ISSUE")
+            body=$(printf 'Submitted via #%s.\n\nCI extracts slide text into `slides.md` on this PR and posts a **catalog preview** link so you can review how it looks on the site. Nothing merges to `main` until someone reviews it.' "$ISSUE")
             if url=$(gh pr create --draft --head "$BRANCH" --title "$title" --body "$body"); then
               gh issue comment "$ISSUE" --body "Draft pull request opened: ${url}"
             else

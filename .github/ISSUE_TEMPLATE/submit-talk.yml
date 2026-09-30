@@ -10,7 +10,7 @@ body:
 
         GitHub issue attachments top out around **25MB**. If the file is larger, open a pull request and drop `slides.pdf` into a new `talks/` folder instead.
 
-        After you submit, a draft PR is opened. CI extracts per-slide text. Nothing merges to `main` until someone reviews it.
+        After you submit, a draft PR is opened. CI extracts per-slide text and posts a catalog preview link on the PR. Nothing merges to `main` until someone reviews it.
   - type: input
     id: title
     attributes:

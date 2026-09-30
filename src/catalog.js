@@ -16,6 +16,7 @@ let loadError = null;
 init();
 
 async function init() {
+  showPreviewBannerIfNeeded();
   try {
     const res = await fetch("talks/index.json", { cache: "no-store" });
     if (!res.ok) throw new Error(`catalog ${res.status}`);
@@ -28,6 +29,15 @@ async function init() {
   hudCount.textContent = `TALKS: ${catalog.talks.length}`;
   render();
   window.addEventListener("hashchange", render);
+}
+
+function showPreviewBannerIfNeeded() {
+  const banner = document.getElementById("preview-banner");
+  if (!banner) return;
+  if (/\/pr-preview\//.test(window.location.pathname)) {
+    banner.hidden = false;
+    document.body.classList.add("has-preview-banner");
+  }
 }
 
 function route() {
@@ -222,7 +232,7 @@ function renderAdd() {
         <li>Who presented: <code>@github</code>, an alias, or a real name.</li>
         <li>Drag the PDF into the slides field. GitHub attachments cap around 25MB.</li>
       </ol>
-      <p>A draft pull request is opened. CI extracts per-slide text into <code>slides.md</code> so the catalog can search it. Nothing merges until someone looks at it.</p>
+      <p>A draft pull request is opened. CI extracts per-slide text into <code>slides.md</code> so the catalog can search it, and posts a preview link so reviewers can see the talk page before merge. Nothing merges until someone looks at it.</p>
       <p>Optional later: a short <code>recap.md</code>, or captions you align with <code>npm run align -- &lt;slug&gt; captions.vtt</code>. Do not invent a script of the room.</p>
       <p><a class="btn" href="${ISSUE_NEW}">Submit a talk</a></p>
     </div>

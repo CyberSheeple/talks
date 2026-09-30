@@ -1,0 +1,42 @@
+name: Deploy Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Ensure example slides PDF
+        run: |
+          if [ ! -f talks/2026-09-01-how-to-add-a-talk/slides.pdf ]; then
+            node scripts/build-example.mjs
+          fi
+      - run: npm test
+      - run: node scripts/ingest.mjs
+      - name: Pack static site
+        run: node scripts/pack-site.mjs --out _site --cname
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _site
+          branch: gh-pages
+          clean: true
+          clean-exclude: |
+            pr-preview/
+          force: false
+          commit-message: "deploy: catalog from ${{ github.sha }}"
