@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-18T17:07:00.462Z",
+  "generatedAt": "2026-09-30T15:23:00.378Z",
   "talks": [
     {
       "slug": "2026-09-01-how-to-add-a-talk",
@@ -31,6 +31,35 @@
       "recapText": "This is a meta-talk, not a reconstructed live script. The useful bits: export PDF from Slides, drag it onto the issue form, wait for the draft PR, glance at slides.md to see whether search will work.\n",
       "transcriptText": "",
       "path": "talks/2026-09-01-how-to-add-a-talk"
+    },
+    {
+      "slug": "2026-03-01-picoctf-prep-kickoff",
+      "title": "picoCTF Prep_KickOff",
+      "date": "2026-03-01",
+      "datePrecision": "month",
+      "speakers": [
+        {
+          "display": "joevdotme",
+          "github": "joevdotme"
+        }
+      ],
+      "speakerLabels": [
+        "joevdotme"
+      ],
+      "tags": [],
+      "summary": "",
+      "gslides_url": "https://docs.google.com/presentation/d/1EHJvDGkNne-twb8Y4daM9254usq5AC2Wnw8GGbjTpJI/edit?usp=sharing",
+      "duration_minutes": null,
+      "transcript": false,
+      "issue": 1,
+      "hasPdf": true,
+      "hasRecap": false,
+      "hasTranscript": false,
+      "extractStatus": "ok",
+      "slidesText": "picoCTF\nPrep/KickOff\nfortune | cowsay\n_____________________________________\n/ Hacker who underestimated youth now \\\n\\ debugging ego. /\n-------------------------------------\n\\ ^__^\n\\ (oo)\\_______\n(__)\\ )\\/\\\n||----w |\n|| ||\n2600NYC Cyber Sheeple / March 2026 / Joe V\nBreakdown\nTools\nPractice\nOrganizing Writeups\nOverview\n● 8 Major CTFs (since 2017)\n○ 6 of them on picoGym (since 2019)\n● 4 Mini CTFs (since 2020)\n● 1 picoGym exclusive\nBreakdown:\npicoCTF / picoGym\nThen: picoCTF 2019 Easy (15) Medium (34) Hard (35)\nGeneral Skills (12) 7 5 0\nForensics (21) 1 9 11\nReverse Engineering (21) 1 6 14\nBinary Exploitation (3) 0 0 3\nCryptography (15) 2 8 5\nWeb Exploitation (12) 4 6 2\nNow: picoCTF 2025 Easy (14) Medium (22) Hard (5)\nGeneral Skills (5) 4 1 0\nForensics (6) 2 4 0\nReverse Engineering (7) 1 6 0\nBinary Exploitation (3) 1 4 1\nCryptography (15) 2 2 2\nWeb Exploitation (11) 4 5 2\nGeneral Skills\n● 6 Categories\n● 3 Difficulties\n○ Easy: 82\n○ Medium: 235\n○ Hard: 122 Reverse Engineering\nCryptography\nForensics\nBinary Exploitation\nBreakdown:\nCategories\nWeb Exploitation\nEasy: 38\nMedium: 20\nHard: 0\nEasy: 13\nMedium: 48\nHard: 17\nEasy: 3\nMedium: 56\nHard: 32\nEasy: 3\nMedium: 34\nHard: 31\nEasy: 6\nMedium: 37\nHard: 28\nEasy: 19\nMedium: 39\nHard: 14\ndCode (specifically cipher recognizer)\nCyberChef is especially good at compound operations\nTools: General Skills / Forensics / Cryptography\n● Thx Maria for Intro\n● Lots of pre-installed tools\n● Tips\n○ Stay in interactive-mode to keep-alive\n○ wget into /tmp if you prefer a clean $HOME\nTools: Webshell\n● Netcat (nc)\n○ Used especially for Reverse Engineering, Binary Exploitation & Cryptography\n● gunzip (*.gz)\n● | grep -Po 'picoCTF{.*}'\n● | sort -u | wc -l\n● strings (especially for Forensics)\nWebshell: General Skills\nDISKO2; picoGym Exclusive\nfdisk\ndd\nstrings\nWebshell: Forensics\nDISKO3; picoGym Exclusive\nfls\nicat\nMore Info: The Sleuth Kit (TSK) Tool Overview\nWebshell: Forensics\nGDB baby step 4; picoGym Exclusive\n(gdb) info fun\n(gdb) disas main\nWebshell: Reverse Engineering\nGDB baby step 3; picoGym Exclusive\n(gdb) break *main+22\n(gdb) r # after chmod +x\n(gdb) x/4xb $rbp-0x4\nWebshell: Reverse Engineering\nPicker IV; picoGym Exclusive\n(gdb) disas win\nWebshell: Binary Exploitation\nrsa_oracle; picoCTF 2024\nopenssl\nMore Info: pwntools\nWebshell: Cryptography\nkeygenme-py; picoCTF 2021\nread source code\nsha256(\"BENNETT\").hexdigest()\nGrab chars of hash[1-8]; re-order them\nConvert to hex\nMore Info: ord() & chr()\nPractice: Reverse Engineering\nBit-O-Asm 4; picoGym Exclusive\nAI: ASM → C\nPractice: Reverse Engineering\nbuffer overflow 0; picoCTF 2022\nread source code\nlook for input (ie. gets)\nPractice: Binary Exploitation\nwhere are the robots: picoCTF 2019\nPractice: Web Exploitation\nInsp3ct0r: picoCTF 2019\nPractice: Web Exploitation\nOrganizing Writeups: Notion\nOrganizing Writeups: CTFd Parser/Scraper\nhttps://github.com/p0dalirius/ctfd-parser\nhttps://github.com/hanasuru/CTFdScraper\nhttps://github.com/ichinano/CTFdScraper\n● Distributions across more CTFs\n○ Compare Submission Rate\n○ Establish plan of Attack\n● More Hard Examples\n● Coverage of picoGym Playlists\nBlind Spots (if I had more time…)\n● Sign Up!\n● Teams vs Solo\n● Signal Chat\nWhat’s Next\nTHANK YOU\nAND GOOD LUCK!",
+      "recapText": "",
+      "transcriptText": "",
+      "path": "talks/2026-03-01-picoctf-prep-kickoff"
     }
   ],
   "warnings": []
