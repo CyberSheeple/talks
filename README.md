@@ -24,8 +24,9 @@ Still needed in the GitHub UI:
 
 1. Create a `talk` label (the issue form applies it). Ingest also runs if the issue title starts with `[talk]`.
 2. Enable Issues if they are off.
-3. Enable Pages from `main` `/`.
-4. DNS: CNAME `talks.hackers.nyc` → `cybersheeple.github.io`, same pattern as `hackerpost.hackers.nyc`.
+3. **Settings → Actions → General → Workflow permissions** → enable **Allow GitHub Actions to create and approve pull requests**. Without this, issue ingest can push a `talk/…` branch but `gh pr create` fails with “GitHub Actions is not permitted to create or approve pull requests”.
+4. Enable Pages from `main` `/`.
+5. DNS: CNAME `talks.hackers.nyc` → `cybersheeple.github.io`, same pattern as `hackerpost.hackers.nyc`.
 
 If the PDF is larger than 25MB, open a PR and drop `slides.pdf` into a new folder under `talks/` instead. The same extract job still runs.
 
