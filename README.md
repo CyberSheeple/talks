@@ -16,6 +16,8 @@ Friends should not need git or Node.
 4. Who presented: `@github` usernames, aliases, or IRL names.
 5. Drag the PDF into the slides field (GitHub issue attachments cap around 25MB).
 
+CI opens a draft PR. After someone merges it to `main`, the submit issue is closed automatically. The issue stays open while the draft is still under review.
+
 ## GitHub org
 
 Canonical repo: **[CyberSheeple/talks](https://github.com/CyberSheeple/talks)** (public).

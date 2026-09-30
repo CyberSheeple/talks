@@ -1,0 +1,51 @@
+name: Close talk issue on merge
+on:
+  pull_request:
+    types: [closed]
+    paths:
+      - "talks/**/talk.json"
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  close-issue:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+      - name: Close linked submit issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(gh pr diff "$PR" --name-only | grep -E '^talks/[^/]+/talk.json$' || true)
+          declare -A seen=()
+          for f in "${files[@]+"${files[@]}"}"; do
+            [ -f "$f" ] || continue
+            n=$(jq -r '.issue // empty' "$f")
+            [ -n "$n" ] || continue
+            seen["$n"]=1
+          done
+          body_n=$(gh pr view "$PR" --json body --jq '.body // ""' | sed -n 's/.*Submitted via #\([0-9][0-9]*\).*/\1/p' | head -n1)
+          if [ -n "$body_n" ]; then
+            seen["$body_n"]=1
+          fi
+          if [ "${#seen[@]}" -eq 0 ]; then
+            echo "No linked talk issue on this PR."
+            exit 0
+          fi
+          for n in "${!seen[@]}"; do
+            state=$(gh issue view "$n" --json state --jq .state)
+            if [ "$state" != "OPEN" ]; then
+              echo "Issue #$n already $state; skipping."
+              continue
+            fi
+            gh issue close "$n" --reason completed --comment "Ingested and merged in #${PR}. Closing this submit issue."
+            echo "Closed #$n"
+          done
