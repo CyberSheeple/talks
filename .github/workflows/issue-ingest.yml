@@ -74,10 +74,26 @@ jobs:
           fi
           existing=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number // empty')
           if [ -z "$existing" ]; then
-            url=$(gh pr create --draft --head "$BRANCH" --title "$(jq -r .prTitle parsed.json)" --body "Submitted via #${ISSUE}.
+            title=$(jq -r .prTitle parsed.json)
+            body=$(printf 'Submitted via #%s.\n\nCI extracts slide text into `slides.md` on this PR. Nothing merges to `main` until someone reviews it.' "$ISSUE")
+            if url=$(gh pr create --draft --head "$BRANCH" --title "$title" --body "$body"); then
+              gh issue comment "$ISSUE" --body "Draft pull request opened: ${url}"
+            else
+              compare="https://github.com/${GITHUB_REPOSITORY}/compare/main...${BRANCH}?expand=1"
+              settings="https://github.com/${GITHUB_REPOSITORY}/settings/actions"
+              gh issue comment "$ISSUE" --body "$(cat <<EOF
+Branch \`${BRANCH}\` is ready with \`talks/${SLUG}\`, but GitHub Actions could not open a pull request.
 
-          CI extracts slide text into \`slides.md\` on this PR. Nothing merges to \`main\` until someone reviews it.")
-            gh issue comment "$ISSUE" --body "Draft pull request opened: ${url}"
+Open the draft PR: ${compare}
+
+**Maintainer fix:** repo **Settings → Actions → General → Workflow permissions** → enable **Allow GitHub Actions to create and approve pull requests**, then re-run the failed ingest job (or edit this issue).
+
+${settings}
+EOF
+)"
+              echo "::error::GITHUB_TOKEN cannot create PRs until 'Allow GitHub Actions to create and approve pull requests' is enabled at ${settings}"
+              exit 1
+            fi
           else
             gh issue comment "$ISSUE" --body "Updated draft PR #${existing} for \`talks/${SLUG}\`."
           fi
