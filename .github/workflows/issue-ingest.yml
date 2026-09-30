@@ -81,16 +81,8 @@ jobs:
             else
               compare="https://github.com/${GITHUB_REPOSITORY}/compare/main...${BRANCH}?expand=1"
               settings="https://github.com/${GITHUB_REPOSITORY}/settings/actions"
-              gh issue comment "$ISSUE" --body "$(cat <<EOF
-Branch \`${BRANCH}\` is ready with \`talks/${SLUG}\`, but GitHub Actions could not open a pull request.
-
-Open the draft PR: ${compare}
-
-**Maintainer fix:** repo **Settings → Actions → General → Workflow permissions** → enable **Allow GitHub Actions to create and approve pull requests**, then re-run the failed ingest job (or edit this issue).
-
-${settings}
-EOF
-)"
+              comment=$(printf 'Branch `%s` is ready with `talks/%s`, but GitHub Actions could not open a pull request.\n\nOpen the draft PR: %s\n\n**Maintainer fix:** repo **Settings → Actions → General → Workflow permissions** → enable **Allow GitHub Actions to create and approve pull requests**, then re-run the failed ingest job (or edit this issue).\n\n%s' "$BRANCH" "$SLUG" "$compare" "$settings")
+              gh issue comment "$ISSUE" --body "$comment"
               echo "::error::GITHUB_TOKEN cannot create PRs until 'Allow GitHub Actions to create and approve pull requests' is enabled at ${settings}"
               exit 1
             fi
